@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>terminal</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Courier New', monospace;
+    }
+
+    body {
+      background: #000;
+      color: #00ff00;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .terminal {
+      background: rgba(0, 20, 0, 0.7);
+      border: 1px solid #00ff00;
+      border-radius: 5px;
+      padding: 20px;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .loading-bar {
+      width: 100%;
+      height: 2px;
+      background: #001400;
+      margin: 20px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .loading-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 20%;
+      background: #00ff00;
+      animation: loading 1.5s infinite;
+      box-shadow: 0 0 10px #00ff00;
+    }
+
+    @keyframes loading {
+      0% {
+        left: -20%;
+      }
+      100% {
+        left: 100%;
+      }
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 20px;
+      background: #00ff00;
+      margin-left: 5px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .input-line {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .prompt {
+      color: #00ff00;
+      margin-right: 10px;
+    }
+
+    .input {
+      background: transparent;
+      border: none;
+      color: #00ff00;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      width: 100%;
+      outline: none;
+    }
+
+    .output {
+      margin: 20px 0;
+      opacity: 0;
+      animation: fadeIn 2s forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    .glitch {
+      animation: glitch 1s infinite;
+      position: relative;
+    }
+
+    @keyframes glitch {
+      0% {
+        text-shadow: none;
+      }
+      20% {
+        text-shadow: 2px 2px #0f0;
+      }
+      40% {
+        text-shadow: -2px -2px #0f0;
+      }
+      60% {
+        text-shadow: 2px -2px #0f0;
+      }
+      80% {
+        text-shadow: -2px 2px #0f0;
+      }
+      100% {
+        text-shadow: none;
+      }
+    }
+
+    .matrix-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      opacity: 0.1;
+    }
+
+    @media (max-width: 600px) {
+      .terminal {
+        padding: 15px;
+      }
+
+      .input, .output {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas class="matrix-bg" id="matrix"></canvas>
+  <div class="container">
+    <div class="terminal">
+      <div class="output glitch">
+        initializing system...
+      </div>
+      <div class="loading-bar"></div>
+      <div class="output">
+        accessing mainframe...
+      </div>
+      <div class="output">
+        > system breach detected
+      </div>
+      <div class="output">
+        > encrypting connection...
+      </div>
+      <div class="output">
+        > establishing secure channel...
+      </div>
+      <div class="input-line">
+        <span class="prompt">root@system:~$</span>
+        <input type="text" class="input" spellcheck="false" autofocus>
+        <span class="cursor"></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = new Array(Math.floor(columns)).fill(1);
+
+    function draw() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#0f0';
+      ctx.font = `${fontSize}px monospace`;
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+
+    setInterval(draw, 35);
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+        </html>
